@@ -1,4 +1,4 @@
-package te4a.spring.boot.mybootapp6;
+package te4a.spring.boot.mybootapp7;
 
 import java.util.List;
 
