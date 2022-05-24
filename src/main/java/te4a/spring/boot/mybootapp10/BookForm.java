@@ -1,4 +1,4 @@
-package te4a.spring.boot.mybootapp9;
+package te4a.spring.boot.mybootapp10;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
