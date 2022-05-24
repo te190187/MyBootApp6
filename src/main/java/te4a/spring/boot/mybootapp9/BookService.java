@@ -1,7 +1,9 @@
 package te4a.spring.boot.mybootapp9;
 
+import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,9 @@ public class BookService {
     BookRepository bookRepository;
 
     public BookForm create(BookForm bookForm) {
-        bookForm.setId(bookRepository.getBookId());
         BookBean bookBean = new BookBean();
         BeanUtils.copyProperties(bookForm, bookBean);
-        bookRepository.create(bookBean);
+        bookRepository.save(bookBean);
 
         return bookForm;
     }
@@ -24,13 +25,13 @@ public class BookService {
     public BookForm update(BookForm bookForm) {
         BookBean bookBean = new BookBean();
         BeanUtils.copyProperties(bookForm, bookBean);
-        bookRepository.update(bookBean);
+        bookRepository.save(bookBean);
 
         return bookForm;
     }
 
     public void delete(Integer id) {
-        bookRepository.delete(id);
+        bookRepository.deleteById(id);
     }
 
     public List<BookForm> findAll() {
@@ -47,7 +48,10 @@ public class BookService {
     }
 
     public BookForm findOne(Integer id) {
-        BookBean bookBean = bookRepository.findOne(id);
+        // OptionalからorElseで値を取り出す。
+        // データが見つからなかった場合の処理は省略して、
+        // 適当に新しいBookBeanをデフォルトで渡す。
+        BookBean bookBean = bookRepository.findById(id).orElse(new BookBean());
         BookForm bookForm = new BookForm();
         BeanUtils.copyProperties(bookBean, bookForm);
 
