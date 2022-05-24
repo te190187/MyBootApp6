@@ -1,4 +1,4 @@
-package te4a.spring.boot.mybootapp7;
+package te4a.spring.boot.mybootapp8;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
