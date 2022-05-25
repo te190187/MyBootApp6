@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
     <title>書籍編集画面</title>
   </head>
-  <body>
-    <form th:action="@{/books/edit}" th:object="${bookForm}" method="post">
-      <table>
+  <body style="padding: 2rem;">
+    <form th:action="@{/books/edit}" th:object="${bookForm}" method="post" style="width: 400px;">
+      <table table class="table table-bordered" style="margin-bottom: 0px;">
         <tr>
-          <td>タイトル:</td>
+          <th class="active">タイトル:</th>
           <td>
             <input type="text" name="title" th:field="*{title}" th:errorclass="error-input"  />
             <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-messages">
@@ -18,7 +19,7 @@
           </td>
         </tr>
         <tr>
-          <td>著者:</td>
+          <th class="active">著者:</th>
           <td>
             <input type="text" name="writter" th:field="*{writter}" th:errorclass="error-input"  />
             <span th:if="${#fields.hasErrors('writter')}" th:errors="*{writter}" class="error-messages">
@@ -27,10 +28,10 @@
           </td>
         </tr>
         <tr>
-          <td>出版社:</td><td><input type="text" name="publisher" th:field="*{publisher}"  /></td>
+          <th class="active">出版社:</th><td><input type="text" name="publisher" th:field="*{publisher}"  /></td>
         </tr>
         <tr>
-          <td>価格:</td>
+          <th class="active">価格:</th>
           <td>
             <input type="text" name="price" th:field="*{price}"  />
             <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-messages">
@@ -39,9 +40,11 @@
           </td>
         </tr>
       </table>
-      <input type="hidden" name="id" th:value="${param.id[0]}" />
-      <input type="submit" name="goToTop" value="戻る" />
-      <input type="submit" value="更新" />
+      <div style="margin-top: 1rem;">
+        <input type="hidden" name="id" th:value="${param.id[0]}" />
+        <input type="submit" name="goToTop" value="戻る" />
+        <input type="submit" value="更新" />
+      </div>
     </form>
   </body>
 </html>
