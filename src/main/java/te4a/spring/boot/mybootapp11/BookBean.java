@@ -1,4 +1,4 @@
-package te4a.spring.boot.mybootapp9;
+package te4a.spring.boot.mybootapp11;
 
 import javax.persistence.*;
 
