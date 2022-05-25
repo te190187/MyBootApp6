@@ -1,10 +1,10 @@
-package te4a.spring.boot.mybootapp11;
+package te4a.spring.boot.mybootapp12;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Mybootapp11ApplicationTests {
+class Mybootapp12ApplicationTests {
 
 	@Test
 	void contextLoads() {
