@@ -1,4 +1,4 @@
-package te4a.spring.boot.mybootapp13;
+package te4a.spring.boot.mybootapp13.controller;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import te4a.spring.boot.mybootapp13.form.BookForm;
+import te4a.spring.boot.mybootapp13.service.BookService;
 
 @Controller
 @RequestMapping("books")

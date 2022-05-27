@@ -7,6 +7,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
   </head>
   <body style="padding: 2rem;">
+    <p>
+      <span sec:authentication="principal.user.username">duke</span>さんログイン中。
+    </p>
+    <form th:action="@{/logout}" method="post"><input type="submit" class="btn btn-default btn-xs" value="ログアウト" /></form>
+
     <form th:action="@{/books/create}" th:object="${bookForm}"
       method="post" 
       style="width: 400px;"
