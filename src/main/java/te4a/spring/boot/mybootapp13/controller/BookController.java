@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import te4a.spring.boot.mybootapp13.form.BookForm;
 import te4a.spring.boot.mybootapp13.service.BookService;
 

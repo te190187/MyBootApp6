@@ -1,23 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8"/>
-    <title>ログインフォーム</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.mincss" th:href="@{/webjars/bootstrap/3.3.7/bootstrap-theme.min.css}" />
+  <head th:replace="common/head :: common_header(~{::title},~{},~{})">
+    <title>ログイン</title>
   </head>
-  <body>
-    <div class="container">
-      <h1>書籍管理システム</h1>
-      <form class="form-signin" method="post" th:action="@{/login}">
-        <h2 class="form-signin-heading">ログインフォーム</h2>
-        <div th:if="${param.error}" class="alert alert-danger">
-          ユーザー名またはパスワードが正しくありません。
+  <body class="bg-light" style="display: flex; height: 100vh">
+    <main style="width: 100%; max-width: 330px; padding: 15px; margin: auto">
+      <div class="card text-center">
+        <h4 class="card-header fw-bold">ログイン</h4>
+        <div
+          class="card-img-top"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+          "
+        >
+          <div style="font-size: 5rem">📚</div>
         </div>
-        <input type="text" class="form-control" name="username" placeholder="Username" required="required" autofocus="autofocus" />
-        <input type="password" class="form-control" name="password" placeholder="Password" required="required" />
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      </form>
-    </div>
+        <div class="card-body">
+          <form method="post" th:action="@{/login}">
+            <div th:if="${param.error}" class="alert alert-danger">
+              ユーザー名またはパスワードが正しくありません。
+            </div>
+
+            <div class="mb-3">
+              <input
+                placeholder="ユーザー名"
+                type="text"
+                name="username"
+                class="form-control"
+                required
+                autofocus
+              />
+            </div>
+            <div class="mb-3">
+              <input
+                placeholder="パスワード"
+                type="password"
+                name="password"
+                class="form-control"
+                id="inputPassword"
+                required
+                autofocus
+              />
+            </div>
+            <button class="btn btn-primary w-100" type="submit">Sign in</button>
+          </form>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

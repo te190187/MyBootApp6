@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}" />
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+  <head th:replace="common/head :: common_header(~{::title},~{},~{})"></head>
     <title>書籍編集画面</title>
   </head>
-  <body style="padding: 2rem;">
+  <body class="" style="padding: 2rem;">
     <form th:action="@{/books/edit}" th:object="${bookForm}" method="post" style="width: 400px;">
       <table table class="table table-bordered" style="margin-bottom: 0px;">
         <tr>

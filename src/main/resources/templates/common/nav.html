@@ -1,0 +1,22 @@
+<nav th:fragment="nav" class="navbar navbar-light bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand text-white fw-bold fs-4" href="/"
+      >📚書籍管理システム</a
+    >
+    <div class="d-flex">
+      <div
+        class="m-2 text-white d-flex justify-content-center align-items-center"
+      >
+        <span sec:authentication="principal.user.username">duke</span>
+        さんログイン中。
+      </div>
+      <form th:action="@{/logout}" method="post">
+        <input
+          type="submit"
+          class="btn btn-danger btn-border-width"
+          value="ログアウト"
+        />
+      </form>
+    </div>
+  </div>
+</nav>

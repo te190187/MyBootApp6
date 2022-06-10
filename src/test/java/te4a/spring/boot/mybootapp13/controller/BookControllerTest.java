@@ -112,4 +112,7 @@ public class BookControllerTest {
       throw new Exception(e);
     }
   }
+
+  // TODO: テストケースの充実、他のテストケースの作成
+  // 参考(https://github.com/tejc999999/EMS/blob/master/src/test/java/jp/ac/ems/controller)
 }

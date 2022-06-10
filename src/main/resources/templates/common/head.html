@@ -1,0 +1,19 @@
+<head th:fragment="common_header(title,links,meta)">
+  <th:block th:replace="${meta}" />
+  <meta charset="utf-8" />
+
+  <title th:replace="${title}">書籍管理システム</title>
+
+  <link
+    rel="stylesheet"
+    href="http://maxcdn.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css"
+    th:href="@{/webjars/bootstrap/5.1.0/css/bootstrap.min.css}"
+  />
+  <link
+    rel="stylesheet"
+    href="http://maxcdn.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap-theme.mincss"
+    th:href="@{/webjars/bootstrap/5.1.0/bootstrap-theme.min.css}"
+  />
+
+  <th:block th:replace="${links}" />
+</head>
