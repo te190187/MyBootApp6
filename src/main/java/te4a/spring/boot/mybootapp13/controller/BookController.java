@@ -57,7 +57,6 @@ public class BookController {
     //入力されたformをそのまま返す別のメソッドを作ったらよさそう
     @PostMapping(path = "edit")
     String edit(@RequestParam Integer id, @Validated BookForm form, BindingResult result) {
-        System.out.println(form);
         if(result.hasErrors()) {
             return editForm(id, form);
         }

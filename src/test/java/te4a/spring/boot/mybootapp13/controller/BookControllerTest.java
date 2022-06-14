@@ -1,13 +1,16 @@
 package te4a.spring.boot.mybootapp13.controller;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.sql.Struct;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -27,6 +32,8 @@ import com.ninja_squad.dbsetup.Operations;
 import com.ninja_squad.dbsetup.destination.DataSourceDestination;
 import com.ninja_squad.dbsetup.destination.Destination;
 import com.ninja_squad.dbsetup.operation.Operation;
+
+import lombok.AllArgsConstructor;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -45,17 +52,24 @@ import static org.assertj.core.api.Assertions.*;
 @WithUserDetails(value = "testuser", userDetailsServiceBeanName = "loginUserDetailsService")
 public class BookControllerTest {
 
-  public static final Operation INSERT_BOOK_DATA1 = Operations
-    .insertInto("books")
-	  .columns("id", "title", "writter", "publisher", "price")
-    .values(1, "タイトル１", "著者１", "出版社１", 100)
-    .build();
+  public static class BookData {
+    public BookForm form;
 
-  public static final Operation INSERT_BOOK_DATA2 = Operations
-    .insertInto("books")
-	  .columns("id", "title", "writter", "publisher", "price")
-    .values(2, "タイトル２", "著者２", "出版社２", 200)
-    .build();
+    public BookData(BookForm form){
+      this.form = form;
+    }
+
+    public Operation insertOperation(){
+      return Operations
+        .insertInto("books")
+        .columns("id", "title", "writter", "publisher", "price")
+        .values(form.getId(), form.getTitle(), form.getWritter(), form.getPublisher(), form.getPrice())
+        .build();
+    }
+  }
+
+  public static final BookData bookData1 = new BookData(new BookForm(1, "タイトル1", "著者1", "出版社1", 100));
+  public static final BookData bookData2 = new BookData(new BookForm(2, "タイトル2", "著者2", "出版社2", 200));
 
   @Autowired
   MockMvc mockMvc;
@@ -64,7 +78,7 @@ public class BookControllerTest {
   WebApplicationContext wac;
 
   @Autowired
-  private DataSource dataSrouce;
+  private DataSource dataSource;
 
   @BeforeAll
   public void テスト前処理() {
@@ -79,24 +93,10 @@ public class BookControllerTest {
   public void 書籍追加一覧ページ表示_書籍あり() throws Exception {
     //DB状態
     //書籍:3冊
-    Destination dest = new DataSourceDestination(dataSrouce);
-    Operation ops = Operations.sequenceOf(INSERT_BOOK_DATA1, INSERT_BOOK_DATA2);
+    Destination dest = new DataSourceDestination(dataSource);
+    Operation ops = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
     DbSetup dbSetup = new DbSetup(dest, ops);
     dbSetup.launch();
-
-    BookForm form1 = new BookForm();
-    form1.setId(1);
-    form1.setTitle("タイトル１");
-    form1.setWritter("著者１");
-    form1.setPublisher("出版社１");
-    form1.setPrice(100);
-
-    BookForm form2 = new BookForm();
-    form2.setId(2);
-    form2.setTitle("タイトル２");
-    form2.setWritter("著者２");
-    form2.setPublisher("出版社２");
-    form2.setPrice(200);
 
     MvcResult result = mockMvc.perform(get("/books"))
       .andExpect(status().is2xxSuccessful())
@@ -107,12 +107,51 @@ public class BookControllerTest {
       List<BookForm> list = (List<BookForm>) result
         .getModelAndView().getModel().get("books");
 
-      assertThat(list).contains(form1, form2);
+      assertThat(list).contains(bookData1.form, bookData2.form);
     } catch (NullPointerException e) {
       throw new Exception(e);
     }
   }
 
-  // TODO: テストケースの充実、他のテストケースの作成
-  // 参考(https://github.com/tejc999999/EMS/blob/master/src/test/java/jp/ac/ems/controller)
+  @SuppressWarnings("unchecked")
+  @Test
+  public void 書籍追加一覧ページ表示_書籍なし() throws Exception {
+    var result = mockMvc.perform(get("/books"))
+      .andExpect(status().isOk())
+      .andExpect(view().name("books/list"))
+      .andReturn();
+    
+      var books = (List<BookForm>)result
+        .getModelAndView().getModel().get("books");
+
+      assertThat(books.size()).isEqualTo(0);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void 書籍追加一覧ページ表示_書籍削除時の表示() throws Exception {
+    Destination dest = new DataSourceDestination(dataSource);
+    Operation ops = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
+    DbSetup dbSetup = new DbSetup(dest, ops);
+    dbSetup.launch();
+
+    MvcResult result = mockMvc.perform(
+      post("/books/delete")
+      .param("id", bookData1.form.getId().toString())
+      .with(SecurityMockMvcRequestPostProcessors.csrf())
+    )
+    .andExpect(status().is3xxRedirection())
+    .andReturn();
+
+    // TODO: リダイレクト後の/booksをテストする方法がわからん
+    // 302レスポンスにはモデルbooksはないのでエラーになる
+    try{
+      var books = (List<BookForm>)result
+        .getModelAndView().getModel().get("books");
+
+      assertThat(books).doesNotContain(bookData1.form);
+    } catch (Exception e){
+      throw new Exception(e);
+    }
+  }
 }

@@ -4,12 +4,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import te4a.spring.boot.mybootapp13.validate.Writter;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookForm {
   private Integer id;
 
