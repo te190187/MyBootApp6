@@ -7,36 +7,36 @@
   <body class="bg-light">
     <th:block th:replace="common/nav::nav"/>
 
-    <main class="mt-5 d-flex flex-column align-items-center container">
-      <div class="card">
+    <main class="mt-5 d-flex flex-column align-items-start container">
+      <div class="card shadow-sm">
         <h5 class="card-header">書籍登録</h5>
         <form th:action="@{/books/create}" th:object="${bookForm}"
           method="post" 
-          class="p-2"
+          class="p-3"
           style="width: 400px;"
         >
-          <div class="mb-2">
+          <div class="mb-3">
             <label class="form-label" for="inputTitle">タイトル:</label>
-            <input class="form-control form-control-sm" id="inputTitle" name="title" th:field="*{title}" th:errorclass="error-input"/>
-            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-messages">
+            <input class="form-control form-control-sm " id="inputTitle" name="title" th:field="*{title}" th:errorclass="is-invalid"/>
+            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="invalid-feedback">
               error!
             </span>
           </div>
-          <div class="mb-2">
+          <div class="mb-3">
             <label class="form-label" for="inputWritter">著者:</label>
-            <input class="form-control form-control-sm" id="inputWritter" name="writter" th:field="*{writter}" th:errorclass="error-input"/>
-            <span th:if="${#fields.hasErrors('writter')}" th:errors="*{writter}" class="error-messages">
+            <input class="form-control form-control-sm" id="inputWritter" name="writter" th:field="*{writter}" th:errorclass="is-invalid"/>
+            <span th:if="${#fields.hasErrors('writter')}" th:errors="*{writter}" class="invalid-feedback">
               error!
             </span>
           </div>
-          <div class="mb-2">
+          <div class="mb-3">
             <label class="form-label" for="inputPublisher">出版社:</label>
             <input class="form-control form-control-sm" id="inputPublisher" name="publisher" th:field="*{publisher}"/>
           </div>
-          <div class="mb-2">
+          <div class="mb-3">
             <label class="form-label" for="inputPrice">価格:</label>
-            <input class="form-control form-control-sm" id="inputPrice" name="price" th:field="*{price}" th:errorclass="error-input"/>
-            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-messages">
+            <input class="form-control form-control-sm" id="inputPrice" name="price" th:field="*{price}" th:errorclass="is-invalid"/>
+            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="invalid-feedback">
               error!
             </span>
           </div>
@@ -46,8 +46,8 @@
         </form>
       </div>
 
-    <h3 style="margin-bottom: 0;">本の一覧</h2>
-    <table class="table table-striped table-bordered table-condensed" style="border: 1px; margin-top: 0.5rem;">
+    <h3 class="mt-4">本の一覧</h2>
+    <table class="table table-striped table-bordered table-condensed" >
       <thead>
         <tr>
         <th>ID</th>
@@ -67,12 +67,12 @@
           <td th:text="${book.publisher}">出版社A</td>
           <td th:text="${book.price}">100</td>
           <td>
-            <form th:action="@{/books/edit}" method="post" style="display: inline;">
+            <form th:action="@{/books/edit}" method="post" class="d-inline">
               <input type="submit" name="form" value="編集" class="btn btn-primary btn-sm" />
               <input type="hidden" name="id" th:value="${book.id}"/>
             </form>
 
-            <form th:action="@{/books/delete}" method="post" style="display: inline;">
+            <form th:action="@{/books/delete}" method="post" class="d-inline">
               <input type="submit" name="form" value="削除" class="btn btn-danger btn-sm"/>
               <input type="hidden" name="id" th:value="${book.id}"/>
             </form>

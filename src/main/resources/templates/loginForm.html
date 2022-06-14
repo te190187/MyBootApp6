@@ -3,20 +3,13 @@
   <head th:replace="common/head :: common_header(~{::title},~{},~{})">
     <title>ログイン</title>
   </head>
-  <body class="bg-light" style="display: flex; height: 100vh">
-    <main style="width: 100%; max-width: 330px; padding: 15px; margin: auto">
-      <div class="card text-center">
+  <body
+    class="bg-light vw-100 vh-100 d-flex flex-column justify-content-center align-items-center"
+  >
+      <div class="card text-center shadow flex-grow-0" style="width: 28rem">
         <h4 class="card-header fw-bold">ログイン</h4>
-        <div
-          class="card-img-top"
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-          "
-        >
-          <div style="font-size: 5rem">📚</div>
+        <div class="card-img-top">
+          <div style="font-size: 8rem;">📚</div>
         </div>
         <div class="card-body">
           <form method="post" th:action="@{/login}">

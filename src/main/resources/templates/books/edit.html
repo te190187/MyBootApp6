@@ -3,45 +3,45 @@
   <head th:replace="common/head :: common_header(~{::title},~{},~{})"></head>
     <title>書籍編集画面</title>
   </head>
-  <body class="" style="padding: 2rem;">
-    <form th:action="@{/books/edit}" th:object="${bookForm}" method="post" style="width: 400px;">
-      <table table class="table table-bordered" style="margin-bottom: 0px;">
-        <tr>
-          <th class="active">タイトル:</th>
-          <td>
-            <input type="text" name="title" th:field="*{title}" th:errorclass="error-input"  />
-            <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error-messages">
-              error!
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <th class="active">著者:</th>
-          <td>
-            <input type="text" name="writter" th:field="*{writter}" th:errorclass="error-input"  />
-            <span th:if="${#fields.hasErrors('writter')}" th:errors="*{writter}" class="error-messages">
-              error!
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <th class="active">出版社:</th><td><input type="text" name="publisher" th:field="*{publisher}"  /></td>
-        </tr>
-        <tr>
-          <th class="active">価格:</th>
-          <td>
-            <input type="text" name="price" th:field="*{price}"  />
-            <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-messages">
-              error!
-            </span>
-          </td>
-        </tr>
-      </table>
-      <div style="margin-top: 1rem;">
-        <input type="hidden" name="id" th:value="${param.id[0]}" />
-        <input type="submit" name="goToTop" value="戻る" />
-        <input type="submit" value="更新" />
-      </div>
-    </form>
+  <body class="bg-light vw-100 vh-100 d-flex flex-column justify-content-center align-items-center">
+    <div class="card shadow-sm">
+      <h5 class="card-header">書籍編集</h5>
+      <form th:action="@{/books/edit}" th:object="${bookForm}"
+        method="post" 
+        class="p-3"
+        style="width: 400px;"
+      >
+        <div class="mb-3">
+          <label class="form-label" for="inputTitle">タイトル:</label>
+          <input class="form-control form-control-sm " id="inputTitle" name="title" th:field="*{title}" th:errorclass="is-invalid"/>
+          <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="invalid-feedback">
+            error!
+          </span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="inputWritter">著者:</label>
+          <input class="form-control form-control-sm" id="inputWritter" name="writter" th:field="*{writter}" th:errorclass="is-invalid"/>
+          <span th:if="${#fields.hasErrors('writter')}" th:errors="*{writter}" class="invalid-feedback">
+            error!
+          </span>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="inputPublisher">出版社:</label>
+          <input class="form-control form-control-sm" id="inputPublisher" name="publisher" th:field="*{publisher}"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="inputPrice">価格:</label>
+          <input class="form-control form-control-sm" id="inputPrice" name="price" th:field="*{price}" th:errorclass="is-invalid"/>
+          <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="invalid-feedback">
+            error!
+          </span>
+        </div>
+        <div>
+          <input type="hidden" name="id" th:value="${param.id[0]}" />
+          <input type="submit" name="goToTop" class="btn btn-secondary btn-sm px-3" value="戻る" />
+          <input type="submit" class="btn btn-primary btn-sm px-3" value="更新" />
+        </div>
+      </form>
+    </div>
   </body>
 </html>
