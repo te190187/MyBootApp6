@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import te4a.spring.boot.mybootapp13.form.BookForm;
 import te4a.spring.boot.mybootapp13.service.BookService;
@@ -36,9 +37,14 @@ public class BookController {
     }
 
     @PostMapping(path = "create")
-    String create(@Validated BookForm form, BindingResult result, Model model){
+    String create(@Validated BookForm form, BindingResult result, Model model, RedirectAttributes redirectAttributes){
         if(result.hasErrors()) {
-            return list(model);
+            // modelをそのままattributeに入れられないんだろうか・・・
+            var keys = model.asMap().keySet();
+            for (var key : keys) {
+                redirectAttributes.addFlashAttribute(key, model.getAttribute(key));
+            }
+            return "redirect:/books";
         }
         bookService.create(form);
         return "redirect:/books";
