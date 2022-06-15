@@ -6,3 +6,6 @@ CREATE TABLE IF NOT EXISTS books (
   price int,
   PRIMARY KEY(id)
 );
+
+INSERT INTO books (title, writter, publisher, price)
+  VALUES ('書籍1', '東北タロウ', '出版社1', 100)
