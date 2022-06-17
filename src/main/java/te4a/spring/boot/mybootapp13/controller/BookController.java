@@ -36,15 +36,12 @@ public class BookController {
         return "books/list";
     }
 
-    @PostMapping(path = "create")
+    // books/createにpostを送ってしまうと、送信後のURLがbooks/createになってしまうので、
+    // postリクエストがあればcreateとみなす
+    @PostMapping
     String create(@Validated BookForm form, BindingResult result, Model model, RedirectAttributes redirectAttributes){
         if(result.hasErrors()) {
-            // modelをそのままattributeに入れられないんだろうか・・・
-            var keys = model.asMap().keySet();
-            for (var key : keys) {
-                redirectAttributes.addFlashAttribute(key, model.getAttribute(key));
-            }
-            return "redirect:/books";
+            return list(model);
         }
         bookService.create(form);
         return "redirect:/books";
