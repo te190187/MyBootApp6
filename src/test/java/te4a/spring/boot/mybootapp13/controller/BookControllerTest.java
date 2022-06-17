@@ -12,13 +12,11 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -81,7 +79,7 @@ public class BookControllerTest {
     mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
   }
 
-  // マイグレーションファイルの内でINSERTされた行を消す
+  // マイグレーションファイルの内でINSERTされたデータを消す
   @BeforeEach
   public void cleanUp() {
     Destination dest = new DataSourceDestination(dataSource);
@@ -89,30 +87,23 @@ public class BookControllerTest {
     dbSetup.launch();
   }
 
-
   @SuppressWarnings("unchecked")
   @Test
   public void 存在する書籍を全て取得できる() throws Exception {
-    //DB状態
-    //書籍:3冊
-    Destination dest = new DataSourceDestination(dataSource);
-    Operation ops = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
-    DbSetup dbSetup = new DbSetup(dest, ops);
+    var destination = new DataSourceDestination(dataSource);
+    var operations = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
+    var dbSetup = new DbSetup(destination, operations);
     dbSetup.launch();
 
-    MvcResult result = mockMvc.perform(get("/books"))
+    var result = mockMvc.perform(get("/books"))
       .andExpect(status().is2xxSuccessful())
       .andExpect(view().name("books/list"))
       .andReturn();
 
-    try {
-      List<BookForm> list = (List<BookForm>) result
-        .getModelAndView().getModel().get("books");
+    var books = (List<BookForm>) result
+      .getModelAndView().getModel().get("books");
 
-      assertThat(list).contains(bookData1.form, bookData2.form);
-    } catch (NullPointerException e) {
-      throw new Exception(e);
-    }
+    assertThat(books).contains(bookData1.form, bookData2.form);
   }
 
   @SuppressWarnings("unchecked")
@@ -123,18 +114,18 @@ public class BookControllerTest {
       .andExpect(view().name("books/list"))
       .andReturn();
     
-      var books = (List<BookForm>)result
-        .getModelAndView().getModel().get("books");
+    var books = (List<BookForm>)result
+      .getModelAndView().getModel().get("books");
 
-      assertThat(books.size()).isEqualTo(0);
+    assertThat(books.size()).isEqualTo(0);
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void 書籍を削除できる() throws Exception {
-    Destination dest = new DataSourceDestination(dataSource);
-    Operation ops = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
-    DbSetup dbSetup = new DbSetup(dest, ops);
+    var destination = new DataSourceDestination(dataSource);
+    var operations = Operations.sequenceOf(bookData1.insertOperation(), bookData2.insertOperation());
+    var dbSetup = new DbSetup(destination, operations);
     dbSetup.launch();
 
     // 書籍の削除リクエスト
@@ -151,34 +142,29 @@ public class BookControllerTest {
       .andExpect(status().isOk())
       .andReturn();
 
-    try{
-      var books = (List<BookForm>)result
-        .getModelAndView().getModel().get("books");
+    var books = (List<BookForm>)result
+      .getModelAndView().getModel().get("books");
 
-      assertThat(books)
-        .doesNotContain(bookData1.form)
-        .contains(bookData2.form);
-    } catch (Exception e){
-      throw new Exception(e);
-    }
+    assertThat(books)
+      .doesNotContain(bookData1.form)
+      .contains(bookData2.form);
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void 書籍を登録できる() throws Exception {
-    var bookForm = new BookForm(1, "たいとる", "東北タロウ", "しゅっぱんしゃ", 100);
-
+    var bookForm = new BookForm(1, "タイトル", "東北タロウ", "しゅっぱんしゃ", 100);
 
     // 書籍の登録リクエスト
     mockMvc.perform(
-      post("/books/create")
+      post("/books")
       .param("title", bookForm.getTitle())
       .param("writter", bookForm.getWritter())
       .param("publisher", bookForm.getPublisher())
       .param("price",bookForm.getPrice().toString())
       .with(SecurityMockMvcRequestPostProcessors.csrf())
     )
-    .andExpect(status().is3xxRedirection())
+    .andExpect(status().isOk())
     .andReturn();
 
     // 登録後のページを確認する
@@ -186,19 +172,96 @@ public class BookControllerTest {
       .andExpect(status().isOk())
       .andReturn();
 
-    try {
-      var books = (List<BookForm>)result
-        .getModelAndView().getModel().get("books");
-      assertThat(books.size()).isEqualTo(1);
+    var books = (List<BookForm>)result
+      .getModelAndView().getModel().get("books");
+    assertThat(books.size()).isEqualTo(1);
 
-      var book = books.get(0);
-      assertThat(book.getTitle()).isEqualTo(bookForm.getTitle());
-      assertThat(book.getWritter()).isEqualTo(bookForm.getWritter());
-      assertThat(book.getPublisher()).isEqualTo(bookForm.getPublisher());
-      assertThat(book.getPrice()).isEqualTo(bookForm.getPrice());
+    var book = books.get(0);
+    assertThat(book.getTitle()).isEqualTo(bookForm.getTitle());
+    assertThat(book.getWritter()).isEqualTo(bookForm.getWritter());
+    assertThat(book.getPublisher()).isEqualTo(bookForm.getPublisher());
+    assertThat(book.getPrice()).isEqualTo(bookForm.getPrice());
+  }
 
-    } catch (Exception e) {
-      throw new Exception(e);
-    }
+  @SuppressWarnings("unchecked")
+  @Test
+  public void 著者が東北タロウではない書籍は登録できない() throws Exception {
+    var bookForm = new BookForm(1, "タイトル", "関東ハナコ", "しゅっぱんしゃ", 100);
+
+    // 書籍の登録リクエスト
+    mockMvc.perform(
+      post("/books")
+      .param("title", bookForm.getTitle())
+      .param("writter", bookForm.getWritter())
+      .param("publisher", bookForm.getPublisher())
+      .param("price",bookForm.getPrice().toString())
+      .with(SecurityMockMvcRequestPostProcessors.csrf())
+    )
+    .andExpect(status().isOk())
+    .andExpect(model().hasErrors())
+    .andReturn();
+
+    // 登録後のページを確認する
+    var result = mockMvc.perform(get("/books"))
+      .andExpect(status().isOk())
+      .andReturn();
+
+    var books = (List<BookForm>)result
+      .getModelAndView().getModel().get("books");
+    assertThat(books.size()).isEqualTo(0);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void 書籍を更新できる() throws Exception {
+    var bookBeforeUpdate = new BookForm(-1, "変更前タイトル", "東北タロウ", "変更前出版社", 100);
+
+    // 書籍の登録リクエスト
+    mockMvc.perform(
+      post("/books")
+      .param("title", bookBeforeUpdate.getTitle())
+      .param("writter", bookBeforeUpdate.getWritter())
+      .param("publisher", bookBeforeUpdate.getPublisher())
+      .param("price",bookBeforeUpdate.getPrice().toString())
+      .with(SecurityMockMvcRequestPostProcessors.csrf())
+    )
+    .andExpect(status().isOk())
+    .andReturn();
+
+    // 登録した書籍のidを取得する
+    var registResult = mockMvc.perform(get("/books"))
+      .andReturn();
+    var books = (List<BookForm>)registResult.getModelAndView().getModel().get("books");
+    var bookId = books.get(0).getId();
+    
+
+    // 登録したidを使用して更新リクエストを投げる
+    var titleAfterUpdate = "変更後タイトル";
+    var publisherAfterUpdate = "変更後出版社";
+    var priceAfterUpdate = 10000;
+    mockMvc.perform(
+      post("/books/edit")
+      .param("id", bookId.toString())
+      .param("title", titleAfterUpdate)
+      .param("writter", bookBeforeUpdate.getWritter())
+      .param("publisher", publisherAfterUpdate)
+      .param("price", String.valueOf(priceAfterUpdate))
+      .with(SecurityMockMvcRequestPostProcessors.csrf())
+    )
+    .andExpect(status().is3xxRedirection())
+    .andReturn();
+
+    // 書籍を取得しなおす
+    var updateResult = mockMvc.perform(get("/books"))
+      .andExpect(status().isOk())
+      .andReturn();
+
+    var booksAfterUpdate =  (List<BookForm>)updateResult.getModelAndView().getModel().get("books");
+    var bookAfterUpdate = booksAfterUpdate.get(0);
+
+    assertThat(bookAfterUpdate.getTitle()).isEqualTo(titleAfterUpdate);
+    assertThat(bookAfterUpdate.getWritter()).isEqualTo(bookBeforeUpdate.getWritter());
+    assertThat(bookAfterUpdate.getPublisher()).isEqualTo(publisherAfterUpdate);
+    assertThat(bookAfterUpdate.getPrice()).isEqualTo(priceAfterUpdate);
   }
 }

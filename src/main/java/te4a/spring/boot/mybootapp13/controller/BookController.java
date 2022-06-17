@@ -44,7 +44,7 @@ public class BookController {
             return list(model);
         }
         bookService.create(form);
-        return "redirect:/books";
+        return "forward:/books";
     }
 
     @PostMapping(path = "edit", params = "form")
